@@ -31,7 +31,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+// middleware()->['auth:sanctum', 'verified', 'role:admin']
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function() {
         return Inertia::render('Admin/Index');
     })->name('index');
