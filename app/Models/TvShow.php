@@ -24,4 +24,8 @@ class TvShow extends Model
         );
 
     }
+
+    public function seasons(){
+        return $this->HasMany(Season::class);
+    }
 }

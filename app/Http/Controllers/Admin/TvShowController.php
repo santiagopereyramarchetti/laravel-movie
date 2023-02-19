@@ -7,7 +7,6 @@ use App\Models\TvShow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class TvShowController extends Controller
 {

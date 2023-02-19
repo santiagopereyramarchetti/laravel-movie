@@ -38,8 +38,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('index');
     Route::resource('/movies', MovieController::class);
     Route::resource('/tv-shows', TvShowController::class);
-    Route::resource('/tv-shows/{tv-show}/seasons', SeasonController::class);
-    Route::resource('/tv-shows/{tv-show}/seasons/{season}/episodes', EpisodeController::class);
+    Route::resource('/tv-shows/{tvShow}/seasons', SeasonController::class);
+    Route::resource('/tv-shows/{tvShow}/seasons/{season}/episodes', EpisodeController::class);
     Route::resource('/genres', GenreController::class);
     Route::resource('/casts', CastController::class);
     Route::resource('/tags', TagController::class);

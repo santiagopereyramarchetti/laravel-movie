@@ -2,7 +2,7 @@
   <AdminLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-              TV Show
+              Seasons
             </h2>
         </template>
 
@@ -14,16 +14,16 @@
                 <div class="w-full flex mb-4 p-2 justify-end">
                   <form class="flex space-x-4 shadow bg-white rounded-md m-2 p-2">
                     <div class="p-1 flex items-center">
-                        <label for="tmdb_id_s" class="block text-sm font-medium text-gray-700 mr-4">TvShow Tmdb Id</label>
+                        <label for="tmdb_number_s" class="block text-sm font-medium text-gray-700 mr-4">Seasons Number</label>
                         <div class="relative rounded-md shadow-sm">
-                            <input v-model="tvShowTMDBId" id="tmdb_id_s" name="tmdb_id_s"
-                                class="px-3 py-2 border border-gray-300 rounded" placeholder="TvShow ID" />
+                            <input v-model="seasonNumber" id="tmdb_number_s" name="tmdb_number_s"
+                                class="px-3 py-2 border border-gray-300 rounded" placeholder="Season Number" />
                         </div>
                     </div>
                     <div class="p-1">
                       <button
                         type="button"
-                        @click="generateTvShow"
+                        @click="generateSeason"
                         class="
                           inline-flex
                           items-center
@@ -96,7 +96,7 @@
                       </div>
                       <div class="flex">
                           <select v-model="perPage"
-                            @change="getTvShows"
+                            @change="getSeasons"
                               class="px-4 py-3 w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 text-sm">
                               <option value="5">5 Per Page</option>
                               <option value="10">10 Per Page</option>
@@ -112,27 +112,27 @@
                       <template #tableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Slug</TableHead>
+                        <TableHead>Season Number</TableHead>
                         <TableHead>Poster</TableHead>
-                        <TableHead>Created Year</TableHead>
                         <TableHead>Actions</TableHead>
                       </template>
-                      <TableRow v-for="tvShow in tvShows.data" :key="tvShow.id">
-                        <TableData>{{ tvShow.name }}</TableData>
-                        <TableData>{{ tvShow.slug }}</TableData>
-                        <TableData>{{ tvShow.poster_path }}</TableData>
-                        <TableData>{{ tvShow.created_year }}</TableData>
+                      <TableRow v-for="season in seasons.data" :key="season.id">
+                        <TableData>{{ season.name }}</TableData>
+                        <TableData>{{ season.slug }}</TableData>
+                        <TableData>{{ season.season_number }}</TableData>
+                        <TableData>{{ season.poster_path }}</TableData>
                         <TableData>
                           <div class="flex justify-around">
-                            <ButtonLink class="bg-blue-500 hover:bg-blue-700" :link="route('admin.seasons.index', tvShow.id)">Seasons</ButtonLink>
-                            <ButtonLink :link="route('admin.tv-shows.edit', tvShow.id)">Edit</ButtonLink>
-                            <ButtonLink class="bg-red-500 hover:bg-red-700" :method="'delete'" :link="route('admin.tv-shows.destroy', tvShow.id)">Delete</ButtonLink>
+                            <ButtonLink class="bg-blue-500 hover:bg-blue-700" :link="route('admin.episodes.index', [tvShow.id, season.id])">Episode</ButtonLink>
+                            <ButtonLink :link="route('admin.seasons.edit', [tvShow.id, season.id])">Edit</ButtonLink>
+                            <ButtonLink class="bg-red-500 hover:bg-red-700" :method="'delete'" :link="route('admin.seasons.destroy', [tvShow.id, season.id])">Delete</ButtonLink>
                           </div>
                         </TableData>
                       </TableRow>
                     </Table>
 
                     <div class="p-4 bg-white">
-                      <Pagination :links="tvShows.links"></Pagination>
+                      <Pagination :links="seasons.links"></Pagination>
                     </div>
                   </div>
                 </div>
@@ -146,18 +146,19 @@
 </template>
 
 <script setup>
-  import AdminLayout from '../../Layouts/AdminLayout.vue'
-  import Pagination from '../../Components/Pagination.vue';
+  import AdminLayout from '../../../Layouts/AdminLayout.vue'
+  import Pagination from '../../../Components/Pagination.vue';
   import { Link, router } from '@inertiajs/vue3';
   import { ref, watch } from 'vue';
-  import Table from '../../Components/Table.vue';
-  import TableHead from '../../Components/TableHead.vue';
-  import TableData from '../../Components/TableData.vue';
-  import TableRow from '../../Components/TableRow.vue';
-  import ButtonLink from '../../Components/ButtonLink.vue';
+  import Table from '../../../Components/Table.vue';
+  import TableHead from '../../../Components/TableHead.vue';
+  import TableData from '../../../Components/TableData.vue';
+  import TableRow from '../../../Components/TableRow.vue';
+  import ButtonLink from '../../../Components/ButtonLink.vue';
 
   const props = defineProps({
-    'tvShows': Object,
+    'tvShow': Object,
+    'seasons': Object,
     'filters': Object
   })
 
@@ -165,7 +166,7 @@
   const perPage = ref(props.filters.perPage)
 
   watch(search, (value) => {
-      router.get('/admin/tv-shows', 
+      router.get('/admin/tv-shows/' + props.tvShow.id + '/seasons', 
                   {
                     search: value,
                     perPage: perPage.value
@@ -184,9 +185,9 @@
                 )
   })
 
-  const getTvShows = () => {
+  const getSeasons = () => {
 
-    router.get('/admin/tv-shows', 
+    router.get('/admin/tv-shows/' + props.tvShow.id + '/seasons', 
                   {
                     perPage: perPage.value,
                     search: search.value
@@ -199,17 +200,17 @@
   }
 
   const showSpinner = ref(false)
-  const tvShowTMDBId = ref('')
+  const seasonNumber = ref('')
 
-  const generateTvShow = () => {
-    router.post('/admin/tv-shows', {
-      tvShowTMDBId: tvShowTMDBId.value
+  const generateSeason = () => {
+    router.post('/admin/tv-shows/' + props.tvShow.id + '/seasons', {
+      seasonNumber: seasonNumber.value
     },{
       onStart: () => {
         showSpinner.value =true
       },
       onFinish: () => {
-        tvShowTMDBId.value = ''
+        seasonNumber.value = ''
         showSpinner.value = false
       },
     })
