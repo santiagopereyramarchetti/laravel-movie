@@ -1,14 +1,18 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+    import { computed, ref, watch } from 'vue';
+    import { usePage } from '@inertiajs/vue3';
 
-const show = ref(true);
-const style = computed(() => usePage().props.jetstream.flash?.bannerStyle || 'success');
-const message = computed(() => usePage().props.jetstream.flash?.banner || '');
+    const show = ref(true);
+    const style = computed(() => usePage().props.jetstream.flash?.bannerStyle || 'success');
+    const message = computed(() => usePage().props.jetstream.flash?.banner || '');
 
-watch(message, async () => {
-  show.value = true;
-});
+    watch(message, async () => {
+        show.value = true;
+    });
+    
+    const resetBaner = () => {
+        usePage().props.jetstream.flash.banner = ''
+    }
 </script>
 
 <template>
@@ -38,7 +42,7 @@ watch(message, async () => {
                             class="-mr-1 flex p-2 rounded-md focus:outline-none sm:-mr-2 transition"
                             :class="{ 'hover:bg-indigo-600 focus:bg-indigo-600': style == 'success', 'hover:bg-red-600 focus:bg-red-600': style == 'danger' }"
                             aria-label="Dismiss"
-                            @click.prevent="show = false"
+                            @click.prevent="resetBaner"
                         >
                             <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

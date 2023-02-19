@@ -98,7 +98,7 @@
   })
 
   const search = ref(props.filters.search)
-  const perPage = ref(5)
+  const perPage = ref(props.filters.perPage)
 
   watch(search, (value) => {
       router.get('/admin/tags', 
