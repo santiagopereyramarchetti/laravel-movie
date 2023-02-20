@@ -123,7 +123,7 @@
                         <TableData>{{ season.poster_path }}</TableData>
                         <TableData>
                           <div class="flex justify-around">
-                            <ButtonLink class="bg-blue-500 hover:bg-blue-700" :link="route('admin.episodes.index', [tvShow.id, season.id])">Episode</ButtonLink>
+                            <ButtonLink class="bg-blue-500 hover:bg-blue-700" :link="route('admin.episodes.index', [tvShow.id, season.id])">Episodes</ButtonLink>
                             <ButtonLink :link="route('admin.seasons.edit', [tvShow.id, season.id])">Edit</ButtonLink>
                             <ButtonLink class="bg-red-500 hover:bg-red-700" :method="'delete'" :link="route('admin.seasons.destroy', [tvShow.id, season.id])">Delete</ButtonLink>
                           </div>
