@@ -37,4 +37,17 @@ class Movie extends Model
         );
 
     }
+
+    public function trailers(){
+        return $this->morphMany(TrailerUrl::class, 'trailerable');
+    }
+
+    public function tags(){
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function casts(){
+        return $this->belongsToMany(Cast::class, 'cast_movie');
+    }
+
 }

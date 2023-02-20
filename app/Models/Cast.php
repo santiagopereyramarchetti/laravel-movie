@@ -29,4 +29,8 @@ class Cast extends Model
         );
 
     }
+
+    public function movies(){
+        return $this->belongsToMany(Movie::class, 'cast_movie');
+    }
 }
