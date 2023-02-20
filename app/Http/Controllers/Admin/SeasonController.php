@@ -8,6 +8,7 @@ use App\Models\TvShow;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class SeasonController extends Controller
 {

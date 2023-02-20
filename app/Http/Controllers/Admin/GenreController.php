@@ -7,7 +7,6 @@ use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class GenreController extends Controller
 {
