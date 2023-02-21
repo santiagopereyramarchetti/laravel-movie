@@ -31,7 +31,7 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                         </button>
-                        <div v-show="open" class="absolute z-10 right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-96">
+                        <div v-show="open" class="absolute z-30 right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-96">
                             <div class="px-2 py-2 bg-white rounded-md shadow dark:bg-gray-800 flex flex-wrap">
                                 <Link v-for="genre in genres" :key="genre.id" class="text-sm p-2 m-2 font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" :href="route('tvShows.show', genre.slug)">{{ genre.title }}</Link>
                             </div>

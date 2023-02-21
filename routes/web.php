@@ -31,7 +31,7 @@ use Inertia\Inertia;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('/movies', [FrontendMovieController::class, 'index'])->name('movies.index');
-Route::get('/movies/{TvShow:slug}', [FrontendMovieController::class, 'show'])->name('movies.show');
+Route::get('/movies/{movie:slug}', [FrontendMovieController::class, 'show'])->name('movies.show');
 Route::get('/tv-shows', [FrontendTvShowController::class, 'index'])->name('tvShows.index');
 Route::get('/tv-shows/{TvShow:slug}', [FrontendTvShowController::class, 'show'])->name('tvShows.show');
 Route::get('/tv-shows/{TvShow:slug}/seasons/{season:slug}', [FrontendTvShowController::class, 'seasonShow'])->name('season.show');
