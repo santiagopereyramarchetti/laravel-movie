@@ -1,7 +1,7 @@
 <template>
     <Head title="Welcome" />
 
-    <FrontLayout>
+    <FrontLayout :genres="genres">
         Content
     </FrontLayout>
     
@@ -11,7 +11,9 @@
     import { Head, Link } from '@inertiajs/vue3';
     import FrontLayout from '../Layouts/FrontLayout.vue';
 
-    
+    const props = defineProps({
+        'genres': Array
+    })
 </script>
 
 <style>
