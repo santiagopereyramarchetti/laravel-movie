@@ -12,11 +12,15 @@ class MovieController extends Controller
 {
     public function index(Request $request){
         $perPage = $request->perPage ?? 5;
-        $filters = $request->only('search', 'perPage');
+        $filters = $request->only('search', 'perPage', 'column', 'direction');
 
         $movies = Movie::when($request->search, function($movieList, $search) {
             $movieList->where('title', 'like', "%{$search}%");
-        })->paginate($perPage)
+        })
+        ->when($request->column, function($movieList, $column) use($request){
+            $movieList->orderBy($column, $request->direction);
+        })
+        ->paginate($perPage)
         ->withQueryString();
         
         return Inertia::render('Movies/Index', compact('movies', 'filters'));

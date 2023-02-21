@@ -90,13 +90,13 @@
                                   </svg>
                               </div>
 
-                              <input v-model="search" type="text" placeholder="Search by title"
+                              <input v-model="movieFilters.search" type="text" placeholder="Search by title"
                                   class="px-8 py-3 w-full md:w-2/6 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 text-sm" />
                           </div>
                       </div>
                       <div class="flex">
-                          <select v-model="perPage"
-                            @change="getMovie"
+                          <select v-model="movieFilters.perPage"
+                            @change="movieFilters.perPage = $event.target.value"
                               class="px-4 py-3 w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 text-sm">
                               <option value="5">5 Per Page</option>
                               <option value="10">10 Per Page</option>
@@ -110,15 +110,47 @@
 
                     <Table>
                       <template #tableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Slug</TableHead>
+                        <TableHead class="cursor-pointer" @click="sort('title')">
+                          <div class="flex space-x-4 content-center">
+                            <span>Title</span>
+                            <svg v-if="movieFilters.column == 'title' && movieFilters.direction == 'asc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                            </svg>
+                            <svg v-if="movieFilters.column == 'title' && movieFilters.direction == 'desc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            </svg>
+                          </div>
+                        </TableHead>
+                        <TableHead @click="sort('rating')">
+                          <div class="flex space-x-4 content-center">
+                            <span>Rating</span>
+                            <svg v-if="movieFilters.column == 'rating' && movieFilters.direction == 'asc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                            </svg>
+                            <svg v-if="movieFilters.column == 'rating' && movieFilters.direction == 'desc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            </svg>
+                          </div>
+                        </TableHead>
+                        <TableHead @click="sort('visits')">
+                          <div class="flex space-x-4 content-center">
+                            <span>Visits</span>
+                            <svg v-if="movieFilters.column == 'visits' && movieFilters.direction == 'asc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                            </svg>
+                            <svg v-if="movieFilters.column == 'visits' && movieFilters.direction == 'desc'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            </svg>
+                          </div>
+                        </TableHead>
                         <TableHead>Poster</TableHead>
                         <TableHead>Public</TableHead>
                         <TableHead>Actions</TableHead>
                       </template>
                       <TableRow v-for="movie in movies.data" :key="movie.id">
                         <TableData>{{ movie.title }}</TableData>
-                        <TableData>{{ movie.slug }}</TableData>
+                        <TableData>{{ movie.rating }}</TableData>
+                        <TableData>{{ movie.visits }}</TableData>
                         <TableData>
                           <img class="h-12 w-12 rounded" :src="`https://www.themoviedb.org/t/p/w220_and_h330_face/${movie.poster_path}`"  >
                         </TableData>
@@ -156,54 +188,50 @@
   import AdminLayout from '../../Layouts/AdminLayout.vue'
   import Pagination from '../../Components/Pagination.vue';
   import { Link, router } from '@inertiajs/vue3';
-  import { ref, watch } from 'vue';
+  import { ref, reactive, watch } from 'vue';
   import Table from '../../Components/Table.vue';
   import TableHead from '../../Components/TableHead.vue';
   import TableData from '../../Components/TableData.vue';
   import TableRow from '../../Components/TableRow.vue';
   import ButtonLink from '../../Components/ButtonLink.vue';
+  import { throttle, pickBy } from 'lodash'
 
   const props = defineProps({
     'movies': Object,
     'filters': Object
   })
 
-  const search = ref(props.filters.search)
-  const perPage = ref(props.filters.perPage)
-
-  watch(search, (value) => {
-      router.get('/admin/movies', 
-                  {
-                    search: value,
-                    perPage: perPage.value
-                  },
-                  {
-                    preserveState: true,
-                    /* This avoid to create all the page component after the request, only get the data. We made this because the table going to
-                    refresh every time we type a key and we dont want that.
-                     */
-                    replace: true,
-                    /*Replace the current hisory. This is to avoid have a history to all key. For example if you type "santiago" to search
-                      you going to have a history for s, a new history for sa, a new for san, etc. For avoid that and only have a history
-                      for "santiago" we add this state. Only replace the current page history
-                    */
-                  }
-                )
+  const movieFilters = reactive({
+    search: props.filters.search,
+    perPage: props.filters.perPage,
+    column: props.filters.column,
+    direction: props.filters.direction
   })
 
-  const getMovies = () => {
+  watch(movieFilters, throttle( () => {
+      //Convierte en un objeto el objeto tipo Proxy obtenido del watch
+      let query = pickBy(movieFilters)
+      let queryRoute = route('admin.movies.index', Object.keys(query).length ? query : {
+        remember: 'forget'
+      })
+      console.log(queryRoute)
+      /*Verifica que query tenga al menos un objeto dentro de el, que corresponde con los filters a aplciar y con eso contruye
+        la ruta a consultar posteriormente
+      */
 
-    router.get('/admin/movies', 
-                  {
-                    perPage: perPage.value,
-                    search: search.value
-                  },
-                  {
-                    preserveState: true,
-                    replace: true,
-                  }
-                )
-  }
+      router.get(queryRoute, {}, {
+        preserveState: true,
+        repalce: true,
+      })
+      //Ejecuta la consulta a la ruta creada mediante get
+
+    }, 1000),{
+      deep: true
+    }
+    //El metodo throttle permite ejecutar la función como máximo 1 vez cada X ms, en este caso cada 1000
+
+
+  )
 
   const showSpinner = ref(false)
   const movieTMDBId = ref('')
@@ -220,6 +248,11 @@
         showSpinner.value = false
       },
     })
+  }
+
+  const sort = (column) => {
+    movieFilters.column = column
+    movieFilters.direction = movieFilters.direction == 'asc' ? 'desc' : 'asc'
   }
 
 </script>
