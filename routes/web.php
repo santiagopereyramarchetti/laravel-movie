@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TvShowController;
 use App\Http\Controllers\Frontend\CastController as FrontendCastController;
 use App\Http\Controllers\Frontend\GenreController as FrontendGenreController;
 use App\Http\Controllers\Frontend\MovieController as FrontendMovieController;
+use App\Http\Controllers\Frontend\TagController as FrontendTagController;
 use App\Http\Controllers\Frontend\TvShowController as FrontendTvShowController;
 use App\Http\Controllers\Frontend\WelcomeController;
 use App\Models\TrailerUrl;
@@ -33,12 +34,13 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('/movies', [FrontendMovieController::class, 'index'])->name('movies.index');
 Route::get('/movies/{movie:slug}', [FrontendMovieController::class, 'show'])->name('movies.show');
 Route::get('/tv-shows', [FrontendTvShowController::class, 'index'])->name('tvShows.index');
-Route::get('/tv-shows/{TvShow:slug}', [FrontendTvShowController::class, 'show'])->name('tvShows.show');
-Route::get('/tv-shows/{TvShow:slug}/seasons/{season:slug}', [FrontendTvShowController::class, 'seasonShow'])->name('season.show');
-Route::get('/episodes/{episode:slug}', [FrontendTvShowController::class, 'showEpisode'])->name('episodes.show');
+Route::get('/tv-shows/{tvShow:slug}', [FrontendTvShowController::class, 'show'])->name('tvShows.show');
+Route::get('/tv-shows/{tvShow:slug}/seasons/{season:slug}', [FrontendTvShowController::class, 'seasonShow'])->name('season.show');
+Route::get('/episodes/{episode:slug}', [FrontendTvShowController::class, 'episodeShow'])->name('episodes.show');
 Route::get( '/casts', [FrontendCastController::class, 'index'])->name('casts.index');
 Route::get('/casts/{cast:slug}', [FrontendCastController::class, 'show'])->name('casts.show');
 Route::get('/genre/{genre:slug}', [FrontendGenreController::class, 'show'])->name('genres.show');
+Route::get('/tags/{tag:slug}', [FrontendTagController::class, 'show'])->name('tags.show');
 
 // middleware()->['auth:sanctum', 'verified', 'role:admin']
 Route::prefix('admin')->name('admin.')->group(function () {
