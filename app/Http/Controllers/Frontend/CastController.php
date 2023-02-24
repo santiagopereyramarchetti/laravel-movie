@@ -17,7 +17,10 @@ class CastController extends Controller
     }
 
     public function show(Cast $cast){
+        $genres = Genre::all();
+        $movies = $cast->movies()->paginate(12);
 
+        return Inertia::render('Frontend/Casts/Show', compact('genres', 'cast', 'movies'));
     }
 
 }

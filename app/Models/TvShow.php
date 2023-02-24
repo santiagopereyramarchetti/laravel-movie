@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Str;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class TvShow extends Model
+class TvShow extends Model  implements Searchable
 {
     use HasFactory;
 
@@ -23,6 +25,17 @@ class TvShow extends Model
             ],
         );
 
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        $url = route('tvShows.show', $this->slug);
+     
+         return new \Spatie\Searchable\SearchResult(
+            $this,
+            $this->name,
+            $url
+         );
     }
 
     public function seasons(){

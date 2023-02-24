@@ -5,6 +5,7 @@
             <div class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
                 <div class="p-4 flex flex-row items-center justify-between space-x-2">
                     <a href="/" class="text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg dark:text-white focus:outline-none focus:shadow-outline">Movie App</a>
+                    <SearchModal></SearchModal>
                     <button class="md:hidden rounded-lg focus:outline-none focus:shadow-outline" @click="openMobileMenu = !openMobileMenu">
                         <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
                             <path v-show="!open" fill-rule="evenodd"
@@ -21,22 +22,7 @@
                     <Link :href="route('movies.index')" class="bg-transparent px-4 py-2 mt-2 text-sm font-semibold rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">Movies</Link>
                     <Link :href="route('tvShows.index')" class="bg-transparent px-4 py-2 mt-2 text-sm font-semibold rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">TV Shows</Link>
                     <Link :href="route('casts.index')" class="bg-transparent px-4 py-2 mt-2 text-sm font-semibold rounded-lg dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">Casts</Link>
-                    <div class="relative">
-                        <button @click="open = !open" class="bg-transparent dark:bg-transparent flex flex-row items-center w-full px-4 py-2 mt-2 text-sm font-semibold text-left rounded-lg dark:focus:text-white dark:hover:text-white dark:focus:bg-gray-600 dark:hover:bg-gray-600 md:w-auto md:inline md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline">
-                            <span>Genres</span>
-                            <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}"
-                                class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1">
-                                <path fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                        <div v-show="open" class="absolute z-30 right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-96">
-                            <div class="px-2 py-2 bg-white rounded-md shadow dark:bg-gray-800 flex flex-wrap">
-                                <Link v-for="genre in genres" :key="genre.id" class="text-sm p-2 m-2 font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" :href="route('genres.show', genre.slug)">{{ genre.title }}</Link>
-                            </div>
-                        </div>
-                    </div>
+                    <DropdownFront :genres="genres"></DropdownFront>
                 </nav>
             </div>
         </div>
@@ -47,6 +33,8 @@
 <script setup>
     import { ref } from 'vue';
     import { Link } from '@inertiajs/vue3';
+    import DropdownFront from './DropdownFront.vue';
+    import SearchModal from './SearchModal.vue'
 
     const props = defineProps({
         'genres': Array
